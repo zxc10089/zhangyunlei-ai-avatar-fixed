@@ -568,8 +568,9 @@ public class MainActivity extends Activity {
         final boolean isDeepThinkOn = switchDeepThink.isChecked();
         String actualModel = modelName;
         if (base64 != null) {
-            if (!modelName.equals("deepseek-chat") && !modelName.equals("deepseek-vision")) {
-                actualModel = "deepseek-chat";
+            // For vision tasks, if current model isn't a known vision model, use deepseek-vision
+            if (!modelName.contains("vision") && !modelName.equals("deepseek-chat")) {
+                actualModel = "deepseek-vision";
             }
         }
 
@@ -1102,7 +1103,8 @@ public class MainActivity extends Activity {
         avatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
         GradientDrawable bg = new GradientDrawable();
         bg.setShape(GradientDrawable.OVAL);
-        bg.setColor(0xFFAAAAAA);
+        bg.setColor(0xFF3A3A3C);
+        bg.setStroke(3, 0xFF5A5A5C); // Add border
         avatar.setBackground(bg);
         if (isAI && aiAvatarBitmap != null) {
             avatar.setImageBitmap(aiAvatarBitmap);
@@ -1138,14 +1140,7 @@ public class MainActivity extends Activity {
         bubbleLayout.setLayoutParams(layoutParams);
         bubbleLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-        final ImageView avatar = new ImageView(this);
-        final LinearLayout.LayoutParams avatarParams = new LinearLayout.LayoutParams(80, 80);
-        avatar.setLayoutParams(avatarParams);
-        avatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        final GradientDrawable avatarBg = new GradientDrawable();
-        avatarBg.setShape(GradientDrawable.OVAL);
-        avatarBg.setColor(0xFFAAAAAA);
-        avatar.setBackground(avatarBg);
+        final ImageView avatar = createAvatarView(!role.equals("user")); // Use createAvatarView for consistent style
 
         if ("user".equals(role)) {
             bubbleLayout.setGravity(Gravity.END);
