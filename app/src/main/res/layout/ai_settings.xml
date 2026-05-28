@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1C1C1E"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI 设置"
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- API Key -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="API Key"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/etApiKey"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/edit_bg"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#666666"
+            android:hint="请输入你的 DeepSeek API Key"
+            android:inputType="text"
+            android:singleLine="true"
+            android:layout_marginTop="8dp"/>
+
+        <!-- API 地址 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="API 地址"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <EditText
+            android:id="@+id/etApiUrl"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/edit_bg"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#666666"
+            android:hint="https://api.deepseek.com/v1/chat/completions"
+            android:inputType="textUri"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 模型选择 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="模型"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerModel"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/edit_bg"
+            android:layout_marginTop="8dp"
+            android:entries="@array/models"/>
+
+        <!-- 温度 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="温度 (Temperature)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <SeekBar
+                android:id="@+id/seekBarTemperature"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="20"/>
+
+            <TextView
+                android:id="@+id/tvTemperature"
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:text="1.0"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- Top P -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Top P"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <SeekBar
+                android:id="@+id/seekBarTopP"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="100"/>
+
+            <TextView
+                android:id="@+id/tvTopP"
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:text="1.00"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- 最大输出长度 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="最大输出长度 (Max Tokens)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <EditText
+            android:id="@+id/etMaxTokens"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@drawable/edit_bg"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#666666"
+            android:hint="4096"
+            android:inputType="number"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 频率惩罚 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="频率惩罚 (Frequency Penalty)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <SeekBar
+                android:id="@+id/seekBarFreqPenalty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="40"/>
+
+            <TextView
+                android:id="@+id/tvFreqPenalty"
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- 存在惩罚 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="存在惩罚 (Presence Penalty)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <SeekBar
+                android:id="@+id/seekBarPresPenalty"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="40"/>
+
+            <TextView
+                android:id="@+id/tvPresPenalty"
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:text="0.0"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- 上下文记忆数量 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="上下文记忆条数 (Context Length)"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <SeekBar
+                android:id="@+id/seekBarContext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:max="40"
+                android:progress="20"/>
+
+            <TextView
+                android:id="@+id/tvContext"
+                android:layout_width="52dp"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- 深度思考默认状态 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="深度思考默认状态"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <Switch
+            android:id="@+id/switchDeepThinkDefault"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 隐藏思考过程 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="隐藏思考过程"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <Switch
+            android:id="@+id/switchHideReasoning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"/>
+
+        <!-- 流式输出 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="流式输出"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <Switch
+            android:id="@+id/switchStream"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <!-- 自定义提示词追加 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自定义提示词（追加至内置人设）"
+            android:textColor="#AAAAAA"
+            android:textSize="14sp"
+            android:layout_marginTop="20dp"/>
+
+        <EditText
+            android:id="@+id/etCustomPrompt"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:background="@drawable/edit_bg"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#666666"
+            android:hint="在这里添加额外的角色提示词..."
+            android:gravity="top"
+            android:maxLines="6"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/btnSaveAi"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="保存"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/btn_bg"
+            android:layout_marginTop="24dp"/>
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="返回"
+            android:textColor="#AAAAAA"
+            android:background="@drawable/btn_bg"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
+</ScrollView>

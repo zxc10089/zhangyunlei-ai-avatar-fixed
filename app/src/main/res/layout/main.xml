@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1C1C1E">
+
+    <!-- 顶部菜单栏（半透明，高度48dp） -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:background="#B32C2C2E">
+
+        <Button
+            android:id="@+id/btnMenu"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="☰"
+            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:background="?android:selectableItemBackgroundBorderless"/>
+    </LinearLayout>
+
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/main_content">
+
+            <!-- 聊天区域（底部内边距减小，为预览留空间） -->
+            <ScrollView
+                android:id="@+id/scrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:padding="12dp"
+                android:paddingBottom="4dp">
+
+                <LinearLayout
+                    android:id="@+id/messageContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+            <!-- 预览区域（半透明，上移4dp） -->
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#B32C2C2E"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:layout_marginTop="-4dp">
+
+                <LinearLayout
+                    android:id="@+id/previewContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"/>
+            </HorizontalScrollView>
+
+            <!-- 深度思考开关 + 上传按钮 同行（半透明） -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:background="#B32C2C2E"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💭 深度思考"
+                    android:textSize="14sp"
+                    android:textColor="#AAAAAA"
+                    android:layout_marginEnd="8dp"/>
+
+                <Switch
+                    android:id="@+id/switchDeepThink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <Button
+                    android:id="@+id/btnImage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="图片"
+                    android:textSize="13sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/btn_bg"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginEnd="6dp"/>
+
+                <Button
+                    android:id="@+id/btnFile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:text="文件"
+                    android:textSize="13sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/btn_bg"
+                    android:paddingHorizontal="12dp"/>
+            </LinearLayout>
+
+            <!-- 底部输入栏（半透明，底部抬高8dp） -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:background="#B32C2C2E"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <EditText
+                    android:id="@+id/etInput"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/edit_bg"
+                    android:hint="跟二爷唠唠..."
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#666666"
+                    android:paddingHorizontal="16dp"
+                    android:maxLines="4" />
+
+                <Button
+                    android:id="@+id/btnSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:text="发送"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/btn_bg"
+                    android:paddingHorizontal="16dp"
+                    android:layout_marginLeft="8dp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 侧滑菜单（半透明） -->
+        <LinearLayout
+            android:id="@+id/drawer_menu"
+            android:layout_width="260dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:orientation="vertical"
+            android:background="#B32C2C2E"
+            android:paddingTop="32dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="张云雷分身 v1.5"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:padding="16dp"/>
+
+            <Button
+                android:id="@+id/btnSettings"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="设置"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_bg"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:textAllCaps="false"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="4dp"/>
+
+            <Button
+                android:id="@+id/btnAbout"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="关于"
+                android:textColor="#FFFFFF"
+                android:background="@drawable/btn_bg"
+                android:gravity="center_vertical"
+                android:paddingLeft="16dp"
+                android:textAllCaps="false"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="4dp"/>
+        </LinearLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</LinearLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1C1C1E"
+    android:padding="20dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="关于"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:layout_marginBottom="24dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/tvAboutContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#E5E5E7"
+            android:textSize="16sp"
+            android:lineSpacingExtra="4dp"/>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btnBack"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="返回"
+        android:textColor="#AAAAAA"
+        android:backgroundTint="#3A3A3C"
+        android:layout_marginTop="16dp"/>
+</LinearLayout>

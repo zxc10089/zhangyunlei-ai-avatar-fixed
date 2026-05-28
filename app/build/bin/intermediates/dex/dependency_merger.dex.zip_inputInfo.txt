@@ -1,0 +1,14 @@
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/281bd34a032fbe386e45834027974e16/lifecycle-common-2.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/08e251eb72e442584db3e6efac81fb45/core-common-2.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/6853859b9fae0eb35b3aa43eec66ee20/kotlin-stdlib-common-1.4.10.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/9807649b9863ee872f3068b29161625c/customview-1.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/3866348045f11a13f9f1420cfc01bb01/annotations-13.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/dd0731b318d8abe9937af2056805f386/lifecycle-runtime-2.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/f1749454b1277e9f7184fafe03d4fc93/okio-2.8.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/a1456f7a27246100c3681ea1e957f378/versionedparcelable-1.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/0745b9ec56b5470a756cf37f852aed83/drawerlayout-1.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/a930086e26ac13d96487229af11d2010/kotlin-stdlib-1.4.10.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/b3d43bef4ab9178c3fa308b101685ab7/okhttp-4.9.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/dcf18669373f072b77ce53c678a85f5f/annotation-1.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/d1e806cb47a3fc50e8cc666007c08d0f/core-1.0.0.jar.dex.zip
+/storage/emulated/0/AppProjects/张云雷分身/app/build/bin/intermediates/jardex/5b3301c98a104ec2b0668c6e88962a24/collection-1.0.0.jar.dex.zip

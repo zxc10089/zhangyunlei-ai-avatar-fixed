@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="#1C1C1E"
+	android:padding="20dp">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:gravity="center_vertical|center_horizontal">
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="个性化"
+			android:textColor="#FFFFFF"
+			android:textSize="22sp"
+			android:layout_marginBottom="24dp"/>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center">
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:orientation="vertical"
+				android:gravity="center">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="AI 头像"
+					android:textColor="#AAAAAA"
+					android:textSize="14sp"/>
+
+				<ImageView
+					android:id="@+id/ivAiAvatar"
+					android:layout_width="80dp"
+					android:layout_height="80dp"
+					android:src="@drawable/ic_ai_avatar"
+					android:scaleType="centerCrop"
+					android:layout_marginTop="8dp"/>
+
+				<Button
+					android:id="@+id/btnAiAvatar"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="选择图片"
+					android:background="@drawable/btn_bg"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:orientation="vertical"
+				android:gravity="center">
+
+				<TextView
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="用户头像"
+					android:textColor="#AAAAAA"
+					android:textSize="14sp"/>
+
+				<ImageView
+					android:id="@+id/ivUserAvatar"
+					android:layout_width="80dp"
+					android:layout_height="80dp"
+					android:src="@drawable/ic_user_avatar"
+					android:scaleType="centerCrop"
+					android:layout_marginTop="8dp"/>
+
+				<Button
+					android:id="@+id/btnUserAvatar"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="选择图片"
+					android:background="@drawable/btn_bg"
+					android:layout_marginTop="4dp"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="聊天背景"
+			android:textColor="#AAAAAA"
+			android:textSize="14sp"
+			android:layout_marginTop="32dp"/>
+
+		<ImageView
+			android:id="@+id/ivBgPreview"
+			android:layout_width="100dp"
+			android:layout_height="160dp"
+			android:scaleType="centerCrop"
+			android:background="#2C2C2E"
+			android:layout_marginTop="8dp"
+			android:adjustViewBounds="true"/>
+
+		<Button
+			android:id="@+id/btnBackground"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="选择背景图片"
+			android:background="@drawable/btn_bg"
+			android:layout_marginTop="8dp"/>
+
+		<Button
+			android:id="@+id/btnBack"
+			android:layout_width="match_parent"
+			android:layout_height="48dp"
+			android:text="返回"
+			android:textColor="#AAAAAA"
+			android:background="@drawable/btn_bg"
+			android:layout_marginTop="24dp"/>
+
+	</LinearLayout>
+
+</ScrollView>
+

@@ -1,0 +1,39 @@
+apply plugin: "com.android.application"
+
+android {
+    buildToolsVersion "34.0.0"
+    compileSdkVersion 34
+
+    namespace "zxc10089.zyl.lanlan"
+    defaultConfig {
+        applicationId "zxc10089.zyl.lanlan"
+        minSdkVersion 26
+        targetSdkVersion 34
+        versionCode 5
+        versionName "1.5"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    buildFeatures{
+        viewBinding false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+    implementation 'androidx.drawerlayout:drawerlayout:1.0.0'
+    runtimeOnly fileTree(dir: 'runtime', include: ['*.jar'])
+    compileOnly fileTree(dir: 'provider', include: ['.jar'])
+}

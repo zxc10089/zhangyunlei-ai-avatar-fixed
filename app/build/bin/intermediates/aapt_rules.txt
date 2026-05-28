@@ -1,0 +1,19 @@
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:15
+-keep class androidx.core.app.CoreComponentFactory { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:38
+-keep class zxc10089.zyl.lanlan.AboutActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:46
+-keep class zxc10089.zyl.lanlan.AiSettingsActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:31
+-keep class zxc10089.zyl.lanlan.MainActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:50
+-keep class zxc10089.zyl.lanlan.MemoryManageActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:42
+-keep class zxc10089.zyl.lanlan.PersonalizationActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:34
+-keep class zxc10089.zyl.lanlan.SettingsActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/build/bin/merged/AndroidManifest.xml:21
+-keep class zxc10089.zyl.lanlan.SetupActivity { <init>(); }
+# Referenced at /storage/emulated/0/AppProjects/张云雷分身/app/src/main/res/layout/main.xml:26
+-keep class androidx.drawerlayout.widget.DrawerLayout { <init>(...); }
+

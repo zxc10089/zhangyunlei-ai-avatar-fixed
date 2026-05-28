@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1C1C1E"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:layout_marginBottom="24dp"/>
+
+    <Button
+        android:id="@+id/btnPersonalization"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="个性化"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnAiSettings"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="AI 设置"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnMemoryManage"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="管理记忆"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnBackup"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="备份聊天记录"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnRestore"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="恢复聊天记录"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnClearHistory"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="清除聊天记录"
+        android:textColor="#FF6B6B"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+
+    <Button
+        android:id="@+id/btnResetWizard"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="重新运行配置向导"
+        android:textColor="#AAAAAA"
+        android:background="@drawable/btn_bg"
+        android:layout_marginTop="8dp"/>
+</LinearLayout>
