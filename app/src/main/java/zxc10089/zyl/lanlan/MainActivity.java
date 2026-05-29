@@ -892,10 +892,8 @@ public class MainActivity extends Activity {
 															messageContainer.addView(streamReasoningLayout);
 														}
 														streamContentLayout = createAIBubbleLayoutWithButtons("");
-														streamContentTextView = (TextView) streamContentLayout.getChildAt(0).findViewById(R.id.ai_content_text);
-														if (streamContentTextView == null) {
-															streamContentTextView = (TextView) ((LinearLayout) streamContentLayout.getChildAt(0)).getChildAt(1);
-														}
+														LinearLayout bubbleRow = (LinearLayout) streamContentLayout.getChildAt(0);
+														streamContentTextView = (TextView) bubbleRow.getChildAt(1);
 														messageContainer.addView(streamContentLayout);
 														streamInitialized = true;
 													}
