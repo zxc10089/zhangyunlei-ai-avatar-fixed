@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
 
         client = new OkHttpClient.Builder()
 			.connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
-			.readTimeout(0, java.util.concurrent.TimeUnit.SECONDS)
+			.readTimeout(300, java.util.concurrent.TimeUnit.SECONDS)
 			.build();
         prefs = getSharedPreferences("app_config", MODE_PRIVATE);
         mainHandler = new Handler(Looper.getMainLooper());
@@ -261,26 +261,42 @@ public class MainActivity extends Activity {
 
         if (!aiStr.isEmpty()) {
             try {
-                aiAvatarBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(aiStr)));
+                if (aiAvatarBitmap != null) {
+                    aiAvatarBitmap.recycle();
+                    aiAvatarBitmap = null;
+                }
+                aiAvatarBitmap = decodeSampledBitmapFromUri(Uri.parse(aiStr), 80, 80);
                 aiAvatarUri = Uri.parse(aiStr);
             } catch (Exception e) {
                 aiAvatarBitmap = BitmapFactory.decodeResource(getResources(), defaultAiRes);
                 aiAvatarUri = Uri.parse("android.resource://zxc10089.zyl.lanlan/" + defaultAiRes);
             }
         } else {
+            if (aiAvatarBitmap != null) {
+                aiAvatarBitmap.recycle();
+                aiAvatarBitmap = null;
+            }
             aiAvatarBitmap = BitmapFactory.decodeResource(getResources(), defaultAiRes);
             aiAvatarUri = Uri.parse("android.resource://zxc10089.zyl.lanlan/" + defaultAiRes);
         }
 
         if (!userStr.isEmpty()) {
             try {
-                userAvatarBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(Uri.parse(userStr)));
+                if (userAvatarBitmap != null) {
+                    userAvatarBitmap.recycle();
+                    userAvatarBitmap = null;
+                }
+                userAvatarBitmap = decodeSampledBitmapFromUri(Uri.parse(userStr), 80, 80);
                 userAvatarUri = Uri.parse(userStr);
             } catch (Exception e) {
                 userAvatarBitmap = BitmapFactory.decodeResource(getResources(), defaultUserRes);
                 userAvatarUri = Uri.parse("android.resource://zxc10089.zyl.lanlan/" + defaultUserRes);
             }
         } else {
+            if (userAvatarBitmap != null) {
+                userAvatarBitmap.recycle();
+                userAvatarBitmap = null;
+            }
             userAvatarBitmap = BitmapFactory.decodeResource(getResources(), defaultUserRes);
             userAvatarUri = Uri.parse("android.resource://zxc10089.zyl.lanlan/" + defaultUserRes);
         }
@@ -289,13 +305,46 @@ public class MainActivity extends Activity {
         if (!bgStr.isEmpty()) {
             bgImageUri = Uri.parse(bgStr);
             try {
-                Bitmap bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(bgImageUri));
+                int screenWidth = getResources().getDisplayMetrics().widthPixels;
+                int screenHeight = getResources().getDisplayMetrics().heightPixels;
+                Bitmap bmp = decodeSampledBitmapFromUri(bgImageUri, screenWidth, screenHeight);
                 Drawable d = new BitmapDrawable(getResources(), bmp);
                 findViewById(R.id.main_content).setBackground(d);
             } catch (Exception ignored) {}
         } else {
             findViewById(R.id.main_content).setBackgroundColor(Color.parseColor("#1C1C1E"));
         }
+    }
+
+    private Bitmap decodeSampledBitmapFromUri(Uri uri, int reqWidth, int reqHeight) throws IOException {
+        InputStream is = getContentResolver().openInputStream(uri);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(is, null, options);
+        is.close();
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+
+        is = getContentResolver().openInputStream(uri);
+        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+        is.close();
+        return bitmap;
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
     private String getDefaultSystemPrompt() {
@@ -450,11 +499,24 @@ public class MainActivity extends Activity {
         if (requestCode == REQUEST_IMAGE) {
             item.type = "image";
             try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                int maxSize = 1024;
+                Bitmap bitmap = decodeSampledBitmapFromUri(uri, maxSize, maxSize);
+                if (bitmap == null) {
+                    Toast.makeText(this, "读取图片失败", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 85, baos);
                 byte[] imageBytes = baos.toByteArray();
-                item.base64 = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+                bitmap.recycle();
+                
+                int maxBase64Length = 10 * 1024 * 1024;
+                String base64 = Base64.encodeToString(imageBytes, Base64.NO_WRAP);
+                if (base64.length() > maxBase64Length) {
+                    Toast.makeText(this, "图片过大，请选择较小的图片", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                item.base64 = base64;
                 item.mimeType = "image/jpeg";
             } catch (Exception e) {
                 Toast.makeText(this, "读取图片失败", Toast.LENGTH_SHORT).show();
@@ -523,61 +585,70 @@ public class MainActivity extends Activity {
         updatePreview();
 
         String displayMessage = userMessage;
-        String apiMessage = userMessage;
-        String imagePath = null;
+        StringBuilder apiMessageBuilder = new StringBuilder(userMessage);
+        ArrayList<String> imagePaths = new ArrayList<>();
+        ArrayList<AttachmentItem> imageAttachments = new ArrayList<>();
         String fileText = null;
-        String base64 = null;
-        String mimeType = null;
 
-        if (!sendingAttachments.isEmpty()) {
-            AttachmentItem firstAttachment = sendingAttachments.get(0);
-            if ("image".equals(firstAttachment.type)) {
-                base64 = firstAttachment.base64;
-                mimeType = firstAttachment.mimeType;
+        boolean hasImage = false;
+        boolean hasFile = false;
+
+        for (AttachmentItem item : sendingAttachments) {
+            if ("image".equals(item.type)) {
+                hasImage = true;
+                imageAttachments.add(item);
                 try {
                     File dir = new File(getFilesDir(), "sent_images");
                     if (!dir.exists()) dir.mkdirs();
-                    String fileName = "img_" + System.currentTimeMillis() + ".jpg";
+                    String fileName = "img_" + System.currentTimeMillis() + "_" + imagePaths.size() + ".jpg";
                     File outFile = new File(dir, fileName);
                     FileOutputStream fos = new FileOutputStream(outFile);
-                    byte[] decoded = Base64.decode(base64, Base64.DEFAULT);
+                    byte[] decoded = Base64.decode(item.base64, Base64.DEFAULT);
                     fos.write(decoded);
                     fos.close();
-                    imagePath = outFile.getAbsolutePath();
+                    imagePaths.add(outFile.getAbsolutePath());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                displayMessage = userMessage + (userMessage.isEmpty() ? "" : "\n") + "📷 [图片]";
-            } else if ("file".equals(firstAttachment.type)) {
-                fileText = firstAttachment.textContent;
-                displayMessage = userMessage + (userMessage.isEmpty() ? "" : "\n") + "📄 [文件: " + firstAttachment.fileName + "]";
-                apiMessage = userMessage.isEmpty() ? fileText : userMessage + "\n" + fileText;
+            } else if ("file".equals(item.type) && fileText == null) {
+                hasFile = true;
+                fileText = item.textContent;
+                if (!userMessage.isEmpty()) apiMessageBuilder.append("\n");
+                apiMessageBuilder.append(item.textContent);
             }
         }
 
-        if (imagePath != null) {
-            addUserImageBubble(userMessage, imagePath);
+        if (hasImage) {
+            displayMessage = userMessage + (userMessage.isEmpty() ? "" : "\n") + "📷 [" + imageAttachments.size() + "张图片]";
+        }
+        if (hasFile) {
+            displayMessage = userMessage + (userMessage.isEmpty() ? "" : "\n") + "📄 [文件]";
+        }
+
+        if (!imagePaths.isEmpty()) {
+            for (String imgPath : imagePaths) {
+                addUserImageBubble(imgPath.equals(imagePaths.get(0)) ? userMessage : "", imgPath);
+            }
         } else {
             addBubbleView("user", displayMessage);
         }
-        addMessageToHistory("user", displayMessage, false, imagePath);
+        addMessageToHistory("user", displayMessage, false, imagePaths.isEmpty() ? null : imagePaths.get(0));
 
         etInput.setText("");
         scrollToBottom();
 
         final boolean isDeepThinkOn = switchDeepThink.isChecked();
         String actualModel = modelName;
-        if (base64 != null) {
-            // For vision tasks, if current model isn't a known vision model, use deepseek-vision
-            if (!modelName.contains("vision") && !modelName.equals("deepseek-chat")) {
-                actualModel = "deepseek-vision";
+        if (hasImage) {
+            if (!modelName.contains("vision") && !modelName.contains("v4")) {
+                actualModel = "deepseek-v4-flash";
             }
         }
 
-        final JSONObject body = buildRequestBody(apiMessage, isDeepThinkOn, base64, mimeType, fileText, actualModel);
+        final JSONObject body = buildRequestBody(apiMessageBuilder.toString(), isDeepThinkOn, imageAttachments, fileText, actualModel);
         if (body != null) {
             boolean streamEnabled = prefs.getBoolean("stream", true);
-            if (base64 != null) streamEnabled = false;
+            if (hasImage) streamEnabled = false;
             try { body.put("stream", streamEnabled); } catch (Exception e) {}
             if (streamEnabled) {
                 sendStreamRequest(body);
@@ -588,7 +659,7 @@ public class MainActivity extends Activity {
     }
 
     private JSONObject buildRequestBody(final String userMessage, final boolean isDeepThinkOn,
-                                        final String base64, final String mimeType, final String fileText, final String overrideModel) {
+                                        final ArrayList<AttachmentItem> imageAttachments, final String fileText, final String overrideModel) {
         final JSONObject body = new JSONObject();
         try {
             String useModel = overrideModel != null ? overrideModel : modelName;
@@ -639,7 +710,7 @@ public class MainActivity extends Activity {
             JSONObject userMsg = new JSONObject();
             userMsg.put("role", "user");
 
-            if (base64 != null) {
+            if (imageAttachments != null && !imageAttachments.isEmpty()) {
                 JSONArray contentArray = new JSONArray();
                 if (!userMessage.isEmpty()) {
                     JSONObject textPart = new JSONObject();
@@ -647,12 +718,14 @@ public class MainActivity extends Activity {
                     textPart.put("text", userMessage);
                     contentArray.put(textPart);
                 }
-                JSONObject imagePart = new JSONObject();
-                imagePart.put("type", "image_url");
-                JSONObject imageUrlObj = new JSONObject();
-                imageUrlObj.put("url", "data:" + mimeType + ";base64," + base64);
-                imagePart.put("image_url", imageUrlObj);
-                contentArray.put(imagePart);
+                for (AttachmentItem item : imageAttachments) {
+                    JSONObject imagePart = new JSONObject();
+                    imagePart.put("type", "image_url");
+                    JSONObject imageUrlObj = new JSONObject();
+                    imageUrlObj.put("url", "data:" + item.mimeType + ";base64," + item.base64);
+                    imagePart.put("image_url", imageUrlObj);
+                    contentArray.put(imagePart);
+                }
                 userMsg.put("content", contentArray);
             } else if (fileText != null) {
                 userMsg.put("content", userMessage.isEmpty() ? fileText : userMessage + "\n" + fileText);
@@ -684,8 +757,9 @@ public class MainActivity extends Activity {
         }
 
         final ImageView imageView = new ImageView(this);
+        int targetWidth = (int)(getResources().getDisplayMetrics().widthPixels * 0.6);
         LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(
-			(int)(getResources().getDisplayMetrics().widthPixels * 0.6),
+			targetWidth,
 			ViewGroup.LayoutParams.WRAP_CONTENT);
         imgParams.setMargins(0, 4, 0, 0);
         imgParams.gravity = Gravity.END;
@@ -694,7 +768,7 @@ public class MainActivity extends Activity {
         imageView.setAdjustViewBounds(true);
 
         try {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            Bitmap bitmap = decodeSampledBitmapFromFile(imagePath, targetWidth, targetWidth * 2);
             imageView.setImageBitmap(bitmap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -710,12 +784,25 @@ public class MainActivity extends Activity {
         messageContainer.addView(wrapper);
     }
 
+    private Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeFile(path, options);
+    }
+
     private void showImageFullscreen(final String imagePath) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         ImageView imageView = new ImageView(this);
         imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
         try {
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            int screenHeight = getResources().getDisplayMetrics().heightPixels;
+            Bitmap bitmap = decodeSampledBitmapFromFile(imagePath, screenWidth, screenHeight);
             imageView.setImageBitmap(bitmap);
         } catch (Exception e) {
             e.printStackTrace();
@@ -732,8 +819,8 @@ public class MainActivity extends Activity {
         Request request = new Request.Builder()
 			.url(apiUrl)
 			.header("Authorization", "Bearer " + apiKey)
-			.header("Content-Type", "application/json")
-			.post(RequestBody.create(requestBody.toString(), MediaType.parse("application/json")))
+			.header("Content-Type", "application/json; charset=utf-8")
+			.post(RequestBody.create(requestBody.toString(), MediaType.parse("application/json; charset=utf-8")))
 			.build();
 
         // 重置流式视图引用
@@ -767,7 +854,9 @@ public class MainActivity extends Activity {
 					}
 					BufferedReader reader = null;
 					try {
-						reader = new BufferedReader(new InputStreamReader(response.body().byteStream()));
+						ResponseBody body = response.body();
+						if (body == null) return;
+						reader = new BufferedReader(new InputStreamReader(body.byteStream()));
 						String line;
 						final StringBuilder currentContent = new StringBuilder();
 						final StringBuilder currentReasoning = new StringBuilder();
@@ -795,14 +884,18 @@ public class MainActivity extends Activity {
 										mainHandler.post(new Runnable() {
 												@Override
 												public void run() {
+													if (isFinishing() || isDestroyed()) return;
 													if (!streamInitialized) {
 														if (isDeepThinkOn && !hideReasoning) {
 															streamReasoningLayout = createThinkingBubbleLayout("");
 															streamReasoningTextView = getThinkingTextView(streamReasoningLayout);
 															messageContainer.addView(streamReasoningLayout);
 														}
-														streamContentLayout = createAIBubbleLayout("");
-														streamContentTextView = (TextView) streamContentLayout.getChildAt(1);
+														streamContentLayout = createAIBubbleLayoutWithButtons("");
+														streamContentTextView = (TextView) streamContentLayout.getChildAt(0).findViewById(R.id.ai_content_text);
+														if (streamContentTextView == null) {
+															streamContentTextView = (TextView) ((LinearLayout) streamContentLayout.getChildAt(0)).getChildAt(1);
+														}
 														messageContainer.addView(streamContentLayout);
 														streamInitialized = true;
 													}
@@ -826,6 +919,7 @@ public class MainActivity extends Activity {
 						mainHandler.post(new Runnable() {
 								@Override
 								public void run() {
+									if (isFinishing() || isDestroyed()) return;
 									if (streamReasoningLayout != null) {
 										if (hideReasoning || finalReasoning.isEmpty()) {
 											messageContainer.removeView(streamReasoningLayout);
@@ -835,10 +929,11 @@ public class MainActivity extends Activity {
 										}
 									}
 									if (streamContentLayout != null) {
-										messageContainer.removeView(streamContentLayout);
 										if (!finalContent.isEmpty()) {
-											addAIBubbleWithButtons(finalContent);
+											streamContentTextView.setText(finalContent);
 											addMessageToHistory("assistant", finalContent, false);
+										} else {
+											messageContainer.removeView(streamContentLayout);
 										}
 									}
 									scrollToBottom();
@@ -848,6 +943,7 @@ public class MainActivity extends Activity {
 						if (reader != null) {
 							try { reader.close(); } catch (Exception ignored) {}
 						}
+						try { response.body().close(); } catch (Exception ignored) {}
 					}
 				}
 			});
@@ -857,8 +953,8 @@ public class MainActivity extends Activity {
         Request request = new Request.Builder()
 			.url(apiUrl)
 			.header("Authorization", "Bearer " + apiKey)
-			.header("Content-Type", "application/json")
-			.post(RequestBody.create(requestBody.toString(), MediaType.parse("application/json")))
+			.header("Content-Type", "application/json; charset=utf-8")
+			.post(RequestBody.create(requestBody.toString(), MediaType.parse("application/json; charset=utf-8")))
 			.build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -867,6 +963,7 @@ public class MainActivity extends Activity {
 					mainHandler.post(new Runnable() {
 							@Override
 							public void run() {
+								if (isFinishing() || isDestroyed()) return;
 								Toast.makeText(MainActivity.this, "网络错误: " + e.getMessage(), Toast.LENGTH_SHORT).show();
 							}
 						});
@@ -874,16 +971,17 @@ public class MainActivity extends Activity {
 
 				@Override
 				public void onResponse(Call call, final Response response) throws IOException {
-					if (!response.isSuccessful()) {
-						mainHandler.post(new Runnable() {
-								@Override
-								public void run() {
-									Toast.makeText(MainActivity.this, "请求失败: " + response.code(), Toast.LENGTH_SHORT).show();
-								}
-							});
-						return;
-					}
 					try {
+						if (!response.isSuccessful()) {
+							mainHandler.post(new Runnable() {
+									@Override
+									public void run() {
+										if (isFinishing() || isDestroyed()) return;
+										Toast.makeText(MainActivity.this, "请求失败: " + response.code(), Toast.LENGTH_SHORT).show();
+									}
+								});
+							return;
+						}
 						String bodyStr = response.body().string();
 						final JSONObject json = new JSONObject(bodyStr);
 						final JSONArray choices = json.getJSONArray("choices");
@@ -891,37 +989,25 @@ public class MainActivity extends Activity {
 						final String reply = message.getString("content");
 						final boolean isDeepThinkOn = switchDeepThink.isChecked();
 						final boolean hideReasoning = prefs.getBoolean("hide_reasoning", false);
-						if (isDeepThinkOn && message.has("reasoning_content")) {
-							final String reasoning = message.getString("reasoning_content");
-							mainHandler.post(new Runnable() {
-									@Override
-									public void run() {
-										if (!hideReasoning) {
-											addThinkingBubbleView(reasoning);
-											addMessageToHistory("assistant", reasoning, true);
-										}
-										addAIBubbleWithButtons(reply);
-										addMessageToHistory("assistant", reply, false);
-										scrollToBottom();
-									}
-								});
-						} else {
-							mainHandler.post(new Runnable() {
-									@Override
-									public void run() {
-										addAIBubbleWithButtons(reply);
-										addMessageToHistory("assistant", reply, false);
-										scrollToBottom();
-									}
-								});
-						}
+						mainHandler.post(new Runnable() {
+								@Override
+								public void run() {
+									if (isFinishing() || isDestroyed()) return;
+									addAIBubbleWithButtons(reply);
+									addMessageToHistory("assistant", reply, false);
+									scrollToBottom();
+								}
+							});
 					} catch (final Exception e) {
 						mainHandler.post(new Runnable() {
 								@Override
 								public void run() {
+									if (isFinishing() || isDestroyed()) return;
 									Toast.makeText(MainActivity.this, "解析失败: " + e.getMessage(), Toast.LENGTH_SHORT).show();
 								}
 							});
+					} finally {
+						try { response.body().close(); } catch (Exception ignored) {}
 					}
 				}
 			});
@@ -1096,6 +1182,65 @@ public class MainActivity extends Activity {
         return bubbleRow;
     }
 
+    private LinearLayout createAIBubbleLayoutWithButtons(String content) {
+        LinearLayout wrapper = new LinearLayout(this);
+        wrapper.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams wrapParams = new LinearLayout.LayoutParams(
+			ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        wrapParams.setMargins(0, 8, 0, 8);
+        wrapper.setLayoutParams(wrapParams);
+
+        LinearLayout bubbleRow = new LinearLayout(this);
+        bubbleRow.setLayoutParams(new LinearLayout.LayoutParams(
+									  ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        bubbleRow.setOrientation(LinearLayout.HORIZONTAL);
+        bubbleRow.setGravity(Gravity.START);
+
+        ImageView avatar = createAvatarView(true);
+        TextView tv = createContentTextView(content);
+
+        bubbleRow.addView(avatar);
+        bubbleRow.addView(tv);
+        bubbleRow.addView(createSpacer());
+        wrapper.addView(bubbleRow);
+
+        LinearLayout btnRow = new LinearLayout(this);
+        LinearLayout.LayoutParams btnRowParams = new LinearLayout.LayoutParams(
+			ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        btnRowParams.setMargins(92, 4, 0, 0);
+        btnRow.setLayoutParams(btnRowParams);
+        btnRow.setOrientation(LinearLayout.HORIZONTAL);
+
+        Button copyBtn = new Button(this);
+        copyBtn.setText("复制");
+        copyBtn.setTextSize(12f);
+        copyBtn.setPadding(8, 2, 8, 2);
+        copyBtn.setBackgroundColor(Color.TRANSPARENT);
+        copyBtn.setTextColor(Color.parseColor("#AAAAAA"));
+        final String finalContent = content;
+        copyBtn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) { copyToClipboard(finalContent); }
+			});
+
+        Button memoryBtn = new Button(this);
+        memoryBtn.setText("添加记忆");
+        memoryBtn.setTextSize(12f);
+        memoryBtn.setPadding(8, 2, 8, 2);
+        memoryBtn.setBackgroundColor(Color.TRANSPARENT);
+        memoryBtn.setTextColor(Color.parseColor("#AAAAAA"));
+        memoryBtn.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) { addMemory(finalContent); }
+			});
+
+        btnRow.addView(copyBtn);
+        btnRow.addView(memoryBtn);
+        wrapper.addView(btnRow);
+
+        return wrapper;
+    }
+
     private ImageView createAvatarView(boolean isAI) {
         ImageView avatar = new ImageView(this);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(80, 80);
@@ -1212,5 +1357,13 @@ public class MainActivity extends Activity {
 					scrollView.fullScroll(View.FOCUS_DOWN);
 				}
 			});
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mainHandler != null) {
+            mainHandler.removeCallbacksAndMessages(null);
+        }
     }
 }
