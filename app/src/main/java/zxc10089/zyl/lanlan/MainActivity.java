@@ -665,21 +665,18 @@ public class MainActivity extends Activity {
             String useModel = overrideModel != null ? overrideModel : modelName;
             body.put("model", useModel);
 
-            JSONObject thinkingConfig = new JSONObject();
+            // 只有在需要的时候才添加thinking配置，避免不必要的参数
             if (isDeepThinkOn) {
+                JSONObject thinkingConfig = new JSONObject();
                 thinkingConfig.put("type", "enabled");
-            } else {
-                thinkingConfig.put("type", "disabled");
-            }
-            body.put("thinking", thinkingConfig);
-
-            if (!isDeepThinkOn) {
-                body.put("temperature", temperature);
-                body.put("top_p", topP);
-                body.put("frequency_penalty", frequencyPenalty);
-                body.put("presence_penalty", presencePenalty);
+                body.put("thinking", thinkingConfig);
             }
 
+            // 始终添加这些参数，避免条件性缺失
+            body.put("temperature", temperature);
+            body.put("top_p", topP);
+            body.put("frequency_penalty", frequencyPenalty);
+            body.put("presence_penalty", presencePenalty);
             body.put("max_tokens", maxTokens);
 
             final JSONArray messages = new JSONArray();
